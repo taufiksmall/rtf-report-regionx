@@ -1,12 +1,12 @@
 :root {
-  --red: #e0312a;
-  --purple: #6d28d9;
-  --navy: #1c1a3e;
+  --blue-light: #2563eb;
+  --blue-mid: #1d4ed8;
+  --navy: #0b1642;
   --card-bg: #ffffff;
   --card-radius: 16px;
   --text-dark: #1a1a2e;
   --text-muted: #5f5f72;
-  --accent: #2c1f6e;
+  --accent: #1e3a8a;
 }
 
 * {
@@ -23,7 +23,7 @@ body {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   color: var(--text-dark);
   min-height: 100vh;
-  background: linear-gradient(160deg, #e63a33 0%, #b8342f 18%, #7d2f8e 45%, #3f2678 70%, #1c1a3e 100%);
+  background: linear-gradient(160deg, #38bdf8 0%, #2563eb 30%, #1d4ed8 55%, #10286b 80%, #0b1642 100%);
   background-attachment: fixed;
 }
 
@@ -50,7 +50,7 @@ body {
 
 .logo .brand-mark {
   background: #fff;
-  color: var(--red);
+  color: var(--blue-mid);
   font-weight: 800;
   font-size: 12px;
   padding: 3px 6px;
