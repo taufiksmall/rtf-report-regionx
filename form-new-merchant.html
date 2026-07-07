@@ -68,6 +68,11 @@
       </div>
     </div>
 
+    <div class="form-group">
+      <label for="kendala">Kendala <span class="hint">(jika ada)</span></label>
+      <textarea id="kendala" name="kendala" rows="3" placeholder="Kosongkan jika tidak ada kendala"></textarea>
+    </div>
+
     <div class="form-footer">
       <a class="btn-secondary" href="unit-transaction.html">Batal</a>
       <button type="submit" class="btn btn-primary" id="submitBtn">Submit Laporan</button>
@@ -125,6 +130,7 @@ Jumlah Akuisisi LVM      : ${data.lvm}
 Jumlah Akuisisi EDC      : ${data.edc}
 Jumlah Akuisisi EDC POT  : ${data.edcpot}
 Follow Up Cakra          : ${data.cakra}
+Kendala                  : ${data.kendala || "-"}
 
 _Laporan digenerate otomatis via RTF Report_`
     );
@@ -148,6 +154,7 @@ _Laporan digenerate otomatis via RTF Report_`
       edc: Number(document.getElementById("edc").value || 0),
       edcpot: Number(document.getElementById("edcpot").value || 0),
       cakra: Number(document.getElementById("cakra").value || 0),
+      kendala: document.getElementById("kendala").value.trim(),
       submittedAt: new Date().toISOString()
     };
 
