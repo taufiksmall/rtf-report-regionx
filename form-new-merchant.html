@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Akuisisi New Merchant - RTF Report</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="logo">
+      <span class="brand-mark">R10</span>
+      <div>
+        <div class="brand-name">RTF Report</div>
+        <div class="brand-sub">Region X &bull; Sulawesi &amp; Maluku</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-block">
+    <div class="breadcrumb"><a href="unit-transaction.html">&larr; Transaction</a></div>
+    <h1>Akuisisi New Merchant</h1>
+    <p>Isi laporan akuisisi merchant baru per cabang</p>
+  </div>
+
+  <!-- FORM -->
+  <form id="merchantForm" class="form-card">
+    <div id="statusBox"></div>
+
+    <div class="form-group">
+      <label for="tanggal">Tanggal Laporan</label>
+      <input type="date" id="tanggal" name="tanggal" required />
+    </div>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label for="area">Area</label>
+        <select id="area" name="area" required></select>
+      </div>
+      <div class="form-group">
+        <label for="cabang">Cabang</label>
+        <select id="cabang" name="cabang" required disabled>
+          <option value="">-- Pilih Area dahulu --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label for="lvm">Jumlah Akuisisi LVM</label>
+        <input type="number" id="lvm" name="lvm" min="0" step="1" required />
+      </div>
+      <div class="form-group">
+        <label for="edc">Jumlah Akuisisi EDC</label>
+        <input type="number" id="edc" name="edc" min="0" step="1" required />
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="form-group">
+        <label for="edcpot">Jumlah Akuisisi EDC POT</label>
+        <input type="number" id="edcpot" name="edcpot" min="0" step="1" required />
+      </div>
+      <div class="form-group">
+        <label for="cakra">Follow Up Cakra <span class="hint">(jumlah)</span></label>
+        <input type="number" id="cakra" name="cakra" min="0" step="1" required />
+      </div>
+    </div>
+
+    <div class="form-footer">
+      <a class="btn-secondary" href="unit-transaction.html" style="color:var(--accent);">Batal</a>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Submit Laporan</button>
+    </div>
+  </form>
+
+  <!-- HASIL / REPORT PREVIEW (hidden sampai submit) -->
+  <div class="form-card" id="resultCard" style="display:none; margin-top:22px;">
+    <h3 style="margin-top:0;">Laporan siap dikirim</h3>
+    <div class="report-preview" id="reportText"></div>
+    <button class="btn btn-whatsapp" id="waBtn">📲 Kirim ke WhatsApp</button>
+    <div class="form-footer" style="margin-top:12px;">
+      <button class="btn-secondary" id="copyBtn" style="color:var(--accent);">Salin teks</button>
+      <a class="btn-secondary" href="form-new-merchant.html" style="color:var(--accent);">Buat laporan baru</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/branches.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const areaSelect = document.getElementById("area");
+  const cabangSelect = document.getElementById("cabang");
+  const tanggalInput = document.getElementById("tanggal");
+  const form = document.getElementById("merchantForm");
+  const submitBtn = document.getElementById("submitBtn");
+  const statusBox = document.getElementById("statusBox");
+  const resultCard = document.getElementById("resultCard");
+  const reportText = document.getElementById("reportText");
+  const waBtn = document.getElementById("waBtn");
+  const copyBtn = document.getElementById("copyBtn");
+
+  populateAreaSelect(areaSelect);
+  setDefaultDateToday(tanggalInput);
+
+  areaSelect.addEventListener("change", () => {
+    populateCabangSelect(cabangSelect, areaSelect.value);
+  });
+
+  function showStatus(type, msg) {
+    statusBox.innerHTML = `<div class="status-msg ${type}">${msg}</div>`;
+  }
+
+  function buildWording(data) {
+    return (
+`*LAPORAN AKUISISI NEW MERCHANT*
+Region X - Transaction Banking Retail
+
+Tanggal   : ${formatDateIndo(data.tanggal)}
+Area      : ${data.area}
+Cabang    : ${data.kodeCabang} - ${data.namaCabang}
+
+Jumlah Akuisisi LVM      : ${data.lvm}
+Jumlah Akuisisi EDC      : ${data.edc}
+Jumlah Akuisisi EDC POT  : ${data.edcpot}
+Follow Up Cakra          : ${data.cakra}
+
+_Laporan digenerate otomatis via RTF Report_`
+    );
+  }
+
+  let currentWording = "";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    statusBox.innerHTML = "";
+
+    const cabangOpt = cabangSelect.options[cabangSelect.selectedIndex];
+    const payload = {
+      unit: UNIT_TRANSACTION,
+      produk: "Akuisisi New Merchant",
+      tanggal: tanggalInput.value,
+      area: areaSelect.value,
+      kodeCabang: cabangSelect.value,
+      namaCabang: cabangOpt ? cabangOpt.dataset.nama : "",
+      lvm: Number(document.getElementById("lvm").value || 0),
+      edc: Number(document.getElementById("edc").value || 0),
+      edcpot: Number(document.getElementById("edcpot").value || 0),
+      cakra: Number(document.getElementById("cakra").value || 0),
+      submittedAt: new Date().toISOString()
+    };
+
+    currentWording = buildWording(payload);
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Menyimpan...";
+    showStatus("loading", "Menyimpan data ke Google Sheet...");
+
+    try {
+      await sendToSheet(payload);
+      showStatus("success", "Data berhasil disimpan.");
+    } catch (err) {
+      showStatus("error", `Gagal menyimpan ke Google Sheet: ${err.message}. Anda tetap bisa kirim wording ke WhatsApp secara manual.`);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Laporan";
+    }
+
+    reportText.textContent = currentWording;
+    resultCard.style.display = "block";
+    resultCard.scrollIntoView({ behavior: "smooth" });
+  });
+
+  waBtn.addEventListener("click", () => {
+    openWhatsApp(currentWording);
+  });
+
+  copyBtn.addEventListener("click", async () => {
+    try {
+      await copyToClipboard(currentWording);
+      copyBtn.textContent = "Tersalin!";
+      setTimeout(() => (copyBtn.textContent = "Salin teks"), 1500);
+    } catch (e) {
+      alert("Gagal menyalin teks otomatis, silakan salin manual.");
+    }
+  });
+</script>
+</body>
+</html>
