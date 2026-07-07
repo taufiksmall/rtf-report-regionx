@@ -1,5 +1,5 @@
 :root {
-  --blue-light: #0d307c;
+  --blue-light: #2563eb;
   --blue-mid: #1d4ed8;
   --navy: #0b1642;
   --card-bg: #ffffff;
@@ -220,6 +220,7 @@ input[type="text"],
 select,
 textarea {
   width: 100%;
+  min-height: 46px;
   padding: 12px 14px;
   border: 1.5px solid #dcdce6;
   border-radius: 10px;
@@ -227,6 +228,33 @@ textarea {
   font-family: inherit;
   color: var(--text-dark);
   background: #fff;
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+}
+
+/* Samakan perataan teks input tanggal dengan field lain (default iOS/Safari
+   membuat teks tanggal rata tengah & lebih besar dari field lain) */
+input[type="date"] {
+  text-align: left;
+  line-height: 1.3;
+}
+
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+  margin: 0;
+}
+
+input[type="date"]::-webkit-datetime-edit {
+  font-size: 14px;
+}
+
+select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f5f72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  padding-right: 38px;
 }
 
 input:focus, select:focus, textarea:focus {
